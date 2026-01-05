@@ -76,12 +76,7 @@
         
         /* Border Overrides */
         body.light-mode .border-gray-700 {
-            border-color: #A1A1AA !important; /* light-mode default border (gray-400/500 equivalent) */
-        }
-        
-        /* Hover Border Overrides */
-        body.light-mode .hover\:border-4:hover {
-            border-color: #1F2937 !important; /* Darker border on hover in light mode */
+            border-color: #A1A1AA !important; 
         }
         
         /* Maintain colored hover borders in light mode for the accent colors */
@@ -132,22 +127,9 @@
                 toggleButton.classList.toggle('hover:bg-gray-200', isLightMode);
             }
             
-            const settingsIcon = document.getElementById('settings-icon');
-            if (settingsIcon) {
-                settingsIcon.classList.toggle('text-gray-800', isLightMode);
-                settingsIcon.classList.toggle('hover:text-gray-900', isLightMode);
-                settingsIcon.classList.toggle('hover:text-white', !isLightMode);
-            }
-
             const welcomeText = document.getElementById('welcome-text');
             if (welcomeText) {
                 welcomeText.classList.toggle('text-gray-800', isLightMode);
-            }
-
-            const uploadText = document.getElementById('upload-instruction-text');
-            if (uploadText) {
-                uploadText.classList.toggle('text-gray-800', isLightMode);
-                uploadText.classList.toggle('text-white', !isLightMode);
             }
         }
         
@@ -166,20 +148,15 @@
 
     <!-- ANIMATED BLURRED BACKGROUND -->
     <div id="animated-background">
-        <!-- Blue blob top left -->
         <div class="color-blob bg-hm-accent-blue" style="top: -10%; left: -10%; animation-delay: 0s;"></div>
-        <!-- Pink blob center right -->
         <div class="color-blob bg-hm-accent-pink" style="top: 30%; right: -15%; animation-delay: -10s;"></div>
-        <!-- Green blob bottom center -->
         <div class="color-blob bg-green-500" style="bottom: -20%; left: 20%; animation-delay: -20s;"></div>
     </div>
-    <!-- END ANIMATED BLURRED BACKGROUND -->
 
     <!-- Navigation Bar -->
     <header class="p-4 md:p-6 border-b border-gray-800/50 backdrop-blur-md bg-hm-bg/80 sticky top-0 z-30">
         <div class="w-full px-4 md:px-6 flex justify-between items-center">
             <a href="/" class="text-2xl font-extrabold flex items-center space-x-2">
-                <!-- LOGO ICON -->
                 <svg class="w-6 h-6" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect x="150" y="0" width="200" height="200" rx="40" fill="#4A90E2"/>
                     <rect x="300" y="150" width="200" height="200" rx="40" fill="#FF69B4"/>
@@ -189,95 +166,76 @@
                 <span class="text-white">Health</span><span class="text-hm-accent-pink">Mate</span>
             </a>
             <div class="flex items-center space-x-4">
-                
-                <!-- THEME TOGGLE BUTTON -->
                 <button id="theme-toggle-button" onclick="toggleTheme()" class="p-2 rounded-full transition duration-300">
-                    <div id="theme-toggle-icon" class="text-gray-400">
-                        <!-- Initial icon set by JS in setInitialUI() -->
-                    </div>
+                    <div id="theme-toggle-icon" class="text-gray-400"></div>
                 </button>
-
                 <span id="welcome-text" class="text-sm text-gray-400 hidden sm:block">Welcome, {{ user_name }}</span>
-                <button id="settings-icon" class="text-gray-400 hover:text-white transition duration-200 p-2 rounded-full hover:bg-gray-800">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 002.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                </button>
-                <a href="/prescription?uid={{ uid }}" class="px-5 py-2.5 text-sm font-semibold rounded-full bg-green-500 hover:bg-green-600 transition duration-200 shadow-lg shadow-green-500/30">
-                    New Analysis
+                <a href="/login" class="px-5 py-2.5 text-sm font-semibold rounded-full bg-red-600/20 text-red-400 border border-red-500/50 hover:bg-red-600/40 transition duration-200">
+                    Logout
                 </a>
             </div>
         </div>
     </header>
 
     <!-- Main Dashboard Content -->
-    <main class="w-full px-4 md:px-10 mt-8 relative z-10">
+    <main class="w-full px-4 md:px-10 mt-12 relative z-10">
         <div class="max-w-7xl mx-auto">
             
-            <!-- UPLOAD AREA MOCKUP -->
-            <div class="mb-12 p-8 bg-hm-card/50 rounded-xl shadow-2xl border-4 border-dashed border-gray-600 hover:border-hm-accent-pink transition duration-300 backdrop-blur-lg">
-                <div class="flex flex-col items-center justify-center space-y-4">
-                    <button class="p-4 rounded-full bg-hm-accent-blue/10 text-hm-accent-blue hover:bg-hm-accent-blue/30 transition duration-200">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                    </button>
-                    <p id="upload-instruction-text" class="text-lg font-medium text-white">Drag and drop files here or <a href="/prescription?uid={{ uid }}" class="text-hm-accent-pink hover:text-hm-accent-blue cursor-pointer">Browse Files</a></p>
-                    <p class="text-sm text-gray-500">Supported formats: JPG, PNG, DICOM (Max 50MB)</p>
-                </div>
-            </div>
-            <!-- END UPLOAD AREA MOCKUP -->
-
-            <h1 class="text-3xl font-bold mb-8 text-gray-100">Patient Management Tools</h1>
-            
-            <p id="dashboard-subtitle" class="text-gray-400 mb-8">Access essential health tracking and communication features.</p>
+            <h1 class="text-4xl font-extrabold mb-2 text-gray-100">Patient Dashboard</h1>
+            <p id="dashboard-subtitle" class="text-gray-400 mb-12">Select a service below to manage your health and wellness goals.</p>
 
             <!-- Service Grid (4 columns) -->
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
 
                 <!-- Service Card 1: Prescription Analysis -->
-                <a href="/prescription?uid={{ uid }}" class="group p-6 bg-hm-card/50 rounded-xl shadow-2xl border-2 border-gray-700 hover:border-4 hover:border-hm-accent-blue transition duration-300 h-full backdrop-blur-lg block">
-                    <div class="p-3 mb-4 w-fit rounded-lg bg-purple-500/20 text-purple-400 transition duration-300 group-hover:scale-105">
-                        <!-- Icon for Document/List -->
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <a href="/prescription?uid={{ uid }}" class="group p-8 bg-hm-card/50 rounded-2xl shadow-2xl border-2 border-gray-700 hover:border-hm-accent-blue transition duration-300 h-full backdrop-blur-lg block">
+                    <div class="p-4 mb-6 w-fit rounded-xl bg-purple-500/20 text-purple-400 transition duration-300 group-hover:scale-110">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     </div>
-                    <h2 class="text-xl font-bold text-white mb-2">Prescription Analysis</h2>
-                    <p class="text-sm text-gray-400 mb-4">Reads the prescription given by the doctor and converts it into accessible text and insights.</p>
-                    <span class="text-hm-accent-blue text-sm font-medium hover:underline">View details &rarr;</span>
+                    <h2 class="text-2xl font-bold text-white mb-3">Prescriptions</h2>
+                    <p class="text-gray-400 mb-6 leading-relaxed">Access and review your stored medical prescriptions and pharmacy details.</p>
+                    <span class="text-hm-accent-blue font-bold group-hover:underline">Open Records &rarr;</span>
                 </a>
 
                 <!-- Service Card 2: Diet -->
-                <a href="/diet?uid={{ uid }}" class="group p-6 bg-hm-card/50 rounded-xl shadow-2xl border-2 border-gray-700 hover:border-4 hover:border-orange-500 transition duration-300 h-full backdrop-blur-lg block">
-                    <div class="p-3 mb-4 w-fit rounded-lg bg-orange-500/20 text-orange-400 transition duration-300 group-hover:scale-105">
-                        <!-- Icon for Food/Diet -->
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-2.31 0l-6.195-2.065A2 2 0 009 11.144V7.5a2.5 2.5 0 00-5 0V14.5a2.5 2.5 0 005 0V11.144a2 2 0 001.928-1.784l6.195 2.065a2 2 0 002.31 0 2 2 0 000-3.464z"></path></svg>
+                <a href="/diet?uid={{ uid }}" class="group p-8 bg-hm-card/50 rounded-2xl shadow-2xl border-2 border-gray-700 hover:border-orange-500 transition duration-300 h-full backdrop-blur-lg block">
+                    <div class="p-4 mb-6 w-fit rounded-xl bg-orange-500/20 text-orange-400 transition duration-300 group-hover:scale-110">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-2.31 0l-6.195-2.065A2 2 0 009 11.144V7.5a2.5 2.5 0 00-5 0V14.5a2.5 2.5 0 005 0V11.144a2 2 0 001.928-1.784l6.195 2.065a2 2 0 002.31 0 2 2 0 000-3.464z"></path></svg>
                     </div>
-                    <h2 class="text-xl font-bold text-white mb-2">Diet</h2>
-                    <p class="text-sm text-gray-400 mb-4">Displays and tracks your personalized diet cycle and provides meal recommendations.</p>
-                    <span class="text-orange-500 text-sm font-medium hover:underline">View plan &rarr;</span>
+                    <h2 class="text-2xl font-bold text-white mb-3">Diet Plan</h2>
+                    <p class="text-gray-400 mb-6 leading-relaxed">Track your personalized nutrition cycle and log your daily meals for optimal health.</p>
+                    <span class="text-orange-500 font-bold group-hover:underline">View Meal Plan &rarr;</span>
                 </a>
                 
                 <!-- Service Card 3: Lifestyle -->
-                <a href="/lifestyle?uid={{ uid }}" class="group p-6 bg-hm-card/50 rounded-xl shadow-2xl border-2 border-gray-700 hover:border-4 hover:border-indigo-500 transition duration-300 h-full backdrop-blur-lg block">
-                    <div class="p-3 mb-4 w-fit rounded-lg bg-indigo-500/20 text-indigo-400 transition duration-300 group-hover:scale-105">
-                        <!-- Icon for Lifestyle/Activity -->
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002-2h2a2 2 0 002 2M11 7a2 2 0 002 2H9a2 2 0 002 2z"></path></svg>
+                <a href="/lifestyle?uid={{ uid }}" class="group p-8 bg-hm-card/50 rounded-2xl shadow-2xl border-2 border-gray-700 hover:border-indigo-500 transition duration-300 h-full backdrop-blur-lg block">
+                    <div class="p-4 mb-6 w-fit rounded-xl bg-indigo-500/20 text-indigo-400 transition duration-300 group-hover:scale-110">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002-2h2a2 2 0 002 2M11 7a2 2 0 002 2H9a2 2 0 002 2z"></path></svg>
                     </div>
-                    <h2 class="text-xl font-bold text-white mb-2">Lifestyle</h2>
-                    <p class="text-sm text-gray-400 mb-4">View and monitor lifestyle changes and goals prescribed by your doctor.</p>
-                    <span class="text-indigo-500 text-sm font-medium hover:underline">Track goals &rarr;</span>
+                    <h2 class="text-2xl font-bold text-white mb-3">Lifestyle</h2>
+                    <p class="text-gray-400 mb-6 leading-relaxed">Monitor wellness goals, physical activity, and sleep patterns to maintain balance.</p>
+                    <span class="text-indigo-500 font-bold group-hover:underline">Track Progress &rarr;</span>
                 </a>
 
                 <!-- Service Card 4: Contact -->
-                <a href="/contact?uid={{ uid }}" class="group p-6 bg-hm-card/50 rounded-xl shadow-2xl border-2 border-gray-700 hover:border-4 hover:border-red-500 transition duration-300 h-full backdrop-blur-lg block">
-                    <div class="p-3 mb-4 w-fit rounded-lg bg-red-500/20 text-red-400 transition duration-300 group-hover:scale-105">
-                        <!-- Icon for Contact/Phone -->
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.5l1.5 3 2.25-2.25 1.75 1.75 3-1.5V19a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path></svg>
+                <a href="/contact?uid={{ uid }}" class="group p-8 bg-hm-card/50 rounded-2xl shadow-2xl border-2 border-gray-700 hover:border-red-500 transition duration-300 h-full backdrop-blur-lg block">
+                    <div class="p-4 mb-6 w-fit rounded-xl bg-red-500/20 text-red-400 transition duration-300 group-hover:scale-110">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.5l1.5 3 2.25-2.25 1.75 1.75 3-1.5V19a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path></svg>
                     </div>
-                    <h2 class="text-xl font-bold text-white mb-2">Contact</h2>
-                    <p class="text-sm text-gray-400 mb-4">Securely message and schedule appointments with your designated healthcare provider.</p>
-                    <span class="text-red-500 text-sm font-medium hover:underline">Message doctor &rarr;</span>
+                    <h2 class="text-2xl font-bold text-white mb-3">Contact</h2>
+                    <p class="text-gray-400 mb-6 leading-relaxed">Message your healthcare provider securely or schedule upcoming consultations.</p>
+                    <span class="text-red-500 font-bold group-hover:underline">Get in Touch &rarr;</span>
                 </a>
             </div>
             
         </div>
     </main>
+
+    <footer class="mt-20 border-t border-gray-800 py-8 bg-hm-card/30 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 text-center text-gray-500 text-sm">
+            <p>&copy; 2025 HealthMate. All rights reserved.</p>
+        </div>
+    </footer>
 
 </body>
 </html>

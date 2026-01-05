@@ -4,18 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | HealthMate</title>
+    <title>HealthMate | Diagnose Smarter</title>
+    <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
         body {
             font-family: 'Inter', sans-serif;
             background-color: #0A0D14;
+            /* Deep, dark background */
             overflow-x: hidden;
+            /* Prevent horizontal scroll from background animation */
             transition: background-color 0.3s ease;
         }
 
+        /* Animated Background Container */
         #animated-background {
             position: fixed;
             top: 0;
@@ -25,53 +30,97 @@
             z-index: -1;
         }
 
+        /* Animation Keyframes for slow, gentle movement */
         @keyframes move-bg {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(5vw, -5vh) rotate(2deg); }
-            50% { transform: translate(0, 2vh) rotate(0deg); }
-            75% { transform: translate(-5vw, -2vh) rotate(-2deg); }
-            100% { transform: translate(0, 0) rotate(0deg); }
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            25% {
+                transform: translate(10vw, -10vh) rotate(5deg);
+            }
+
+            50% {
+                transform: translate(0, 5vh) rotate(0deg);
+            }
+
+            75% {
+                transform: translate(-15vw, -5vh) rotate(-10deg);
+            }
+
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
         }
 
+        /* Styling for the animated color blobs */
         .color-blob {
             position: absolute;
-            width: 600px;
-            height: 600px;
+            width: 500px;
+            height: 500px;
             border-radius: 50%;
-            opacity: 0.2;
-            filter: blur(120px);
-            animation: move-bg 20s infinite alternate;
+            opacity: 0.3;
+            /* Subtle blend */
+            filter: blur(150px);
+            /* Heavy blur for the 'jelly' effect */
+            animation: move-bg 15s infinite alternate;
         }
 
-        /* Light Mode Styles */
+        /* --- LIGHT MODE OVERRIDES --- */
         body.light-mode {
-            background-color: #F8FAFC;
-            color: #1E293B;
+            background-color: #F4F6F9;
+            /* Light BG */
+            color: #1F2937;
+            /* Dark text (Base) */
         }
 
+        /* Text Overrides */
         body.light-mode .text-white,
         body.light-mode .text-gray-100,
         body.light-mode .text-gray-300 {
-            color: #1E293B !important;
+            color: #1F2937 !important;
         }
 
-        body.light-mode .text-gray-400 {
-            color: #64748B !important;
+        body.light-mode .text-gray-400,
+        body.light-mode .text-gray-500 {
+            color: #6B7280 !important;
         }
 
+        /* Navigation and Cards (Glassmorphism effect) */
+        body.light-mode header {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-bottom-color: #E5E7EB !important;
+        }
+
+        body.light-mode .backdrop-blur-lg,
         body.light-mode .bg-hm-card\/50 {
             background-color: rgba(255, 255, 255, 0.7);
-            border-color: #E2E8F0 !important;
         }
 
-        body.light-mode header {
-            background-color: rgba(255, 255, 255, 0.8);
-            border-bottom-color: #E2E8F0 !important;
-        }
-
-        body.light-mode .border-gray-800\/50,
+        /* Border Overrides */
         body.light-mode .border-gray-700 {
-            border-color: #CBD5E1 !important;
+            border-color: #A1A1AA !important;
+        }
+
+        /* Hover Border Overrides */
+        body.light-mode .hover\:border-4:hover {
+            border-color: #1F2937 !important;
+        }
+
+        body.light-mode .hover\:border-hm-accent-blue:hover {
+            border-color: #4A90E2 !important;
+        }
+
+        body.light-mode .hover\:border-hm-accent-pink:hover {
+            border-color: #FF69B4 !important;
+        }
+
+        body.light-mode .hover\:border-yellow-500:hover {
+            border-color: #FBBF24 !important;
+        }
+
+        body.light-mode .hover\:border-green-500:hover {
+            border-color: #10B981 !important;
         }
     </style>
     <script>
@@ -98,181 +147,208 @@
 
         function updateUI(isLightMode) {
             const iconContainer = document.getElementById('theme-toggle-icon');
-            if (iconContainer) {
+            const toggleButton = document.getElementById('theme-toggle-button');
+
+            if (iconContainer && toggleButton) {
+                iconContainer.classList.toggle('text-gray-800', isLightMode);
+                iconContainer.classList.toggle('text-gray-400', !isLightMode);
+
                 if (isLightMode) {
-                    iconContainer.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>`;
+                    iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>`;
                 } else {
-                    iconContainer.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>`;
+                    iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>`;
                 }
+
+                toggleButton.classList.toggle('hover:bg-gray-700', !isLightMode);
+                toggleButton.classList.toggle('hover:bg-gray-200', isLightMode);
+            }
+
+            const loginButton = document.getElementById('login-link');
+            if (loginButton) {
+                loginButton.classList.toggle('border-gray-700', !isLightMode);
+                loginButton.classList.toggle('border-gray-400', isLightMode);
+                loginButton.classList.toggle('text-gray-400', isLightMode);
+                loginButton.classList.toggle('hover:border-white', !isLightMode);
+                loginButton.classList.toggle('hover:border-gray-800', isLightMode);
+                loginButton.classList.toggle('text-gray-800', isLightMode);
             }
         }
 
-        window.onload = () => {
+        function setInitialUI() {
             const savedTheme = localStorage.getItem('theme') || 'dark';
-            if (savedTheme === 'light') document.body.classList.add('light-mode');
-            updateUI(savedTheme === 'light');
-        };
-
-        function handleFileUpload(event) {
-            const fileName = event.target.files[0]?.name;
-            if (fileName) {
-                const status = document.getElementById('upload-status');
-                status.innerText = `Ready to analyze: ${fileName}`;
-                status.classList.remove('hidden');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
             }
+            updateUI(savedTheme === 'light');
         }
+
+        window.onload = setInitialUI;
     </script>
 </head>
 
 <body class="bg-hm-bg min-h-screen text-white antialiased">
 
+    <!-- ANIMATED BLURRED BACKGROUND -->
     <div id="animated-background">
-        <div class="color-blob bg-hm-accent-blue" style="top: -10%; left: -5%; animation-delay: 0s;"></div>
-        <div class="color-blob bg-hm-accent-pink" style="bottom: -10%; right: -5%; animation-delay: -5s;"></div>
+        <div class="color-blob bg-hm-accent-blue" style="top: -10%; left: -10%; animation-delay: 0s;"></div>
+        <div class="color-blob bg-hm-accent-pink" style="top: 30%; right: -15%; animation-delay: -10s;"></div>
+        <div class="color-blob bg-green-500" style="bottom: -20%; left: 20%; animation-delay: -20s;"></div>
     </div>
 
-    <!-- Nav -->
-    <header class="p-4 border-b border-gray-800/50 backdrop-blur-md sticky top-0 z-50">
+    <!-- Navigation Bar -->
+    <header class="p-4 md:p-6 border-b border-gray-800/50 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto flex justify-between items-center px-4">
-            <a href="/" class="text-xl font-bold flex items-center space-x-2">
-                <svg class="w-5 h-5" viewBox="0 0 500 500" fill="none"><rect x="150" y="0" width="200" height="200" rx="40" fill="#4A90E2" /><rect x="300" y="150" width="200" height="200" rx="40" fill="#FF69B4" /><rect x="0" y="150" width="200" height="200" rx="40" fill="#4A90E2" /><rect x="150" y="300" width="200" height="200" rx="40" fill="#10B981" /></svg>
-                <span>Health<span class="text-hm-accent-pink">Mate</span></span>
+            <a href="/" class="text-2xl font-extrabold flex items-center space-x-2">
+                <svg class="w-6 h-6" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="150" y="0" width="200" height="200" rx="40" fill="#4A90E2" />
+                    <rect x="300" y="150" width="200" height="200" rx="40" fill="#FF69B4" />
+                    <rect x="0" y="150" width="200" height="200" rx="40" fill="#4A90E2" />
+                    <rect x="150" y="300" width="200" height="200" rx="40" fill="#10B981" />
+                </svg>
+                <span class="text-white">Health</span><span class="text-hm-accent-pink">Mate</span>
             </a>
-            <div class="flex items-center space-x-6">
-                <button onclick="toggleTheme()" id="theme-toggle-icon" class="text-gray-400 hover:text-white transition"></button>
-                <div class="flex items-center space-x-2">
-                    <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-hm-accent-blue to-hm-accent-pink flex items-center justify-center text-xs font-bold">JD</div>
-                    <span class="text-sm font-medium hidden md:block">John Doe</span>
-                </div>
+            <div class="flex items-center space-x-4">
+                <button id="theme-toggle-button" onclick="toggleTheme()" class="p-2 rounded-full transition duration-300">
+                    <div id="theme-toggle-icon" class="text-gray-400"></div>
+                </button>
+
+                <a href="/login" id="login-link"
+                    class="px-5 py-2.5 text-sm font-medium rounded-full bg-transparent border border-gray-700 hover:border-white transition duration-200">
+                    Log In
+                </a>
+                <a href="/signup"
+                    class="px-5 py-2.5 text-sm font-semibold rounded-full bg-hm-accent-blue hover:bg-hm-accent-blue/80 transition duration-200 shadow-lg shadow-hm-accent-blue/30">
+                    Get Started
+                </a>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-4 gap-8">
-        
-        <!-- Sidebar Navigation -->
-        <aside class="lg:col-span-1 space-y-2">
-            <nav class="space-y-1">
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 bg-hm-accent-blue/10 text-hm-accent-blue rounded-xl font-semibold border border-hm-accent-blue/20">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                    <span>Overview</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-gray-800/30 rounded-xl transition">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    <span>My Reports</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-gray-800/30 rounded-xl transition">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                    <span>Health Goals</span>
-                </a>
-            </nav>
+    <!-- Main Content -->
+    <main class="w-full px-4 md:px-10 mt-12 relative z-20">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10">
 
-            <div class="mt-10 p-4 rounded-2xl bg-gradient-to-br from-hm-accent-blue/20 to-hm-accent-pink/10 border border-white/5">
-                <p class="text-xs font-bold uppercase tracking-wider text-hm-accent-blue mb-2">Pro Tip</p>
-                <p class="text-sm text-gray-300">Upload your bloodwork in PDF format for the most accurate AI analysis.</p>
-            </div>
-        </aside>
+            <!-- Left Section -->
+            <div class="lg:col-span-2 space-y-8">
+                <span
+                    class="inline-flex items-center px-3 py-1 text-xs font-medium text-hm-accent-blue bg-hm-card border border-hm-accent-blue/50 rounded-full">
+                    <span class="w-2 h-2 bg-hm-accent-blue rounded-full mr-2"></span>
+                    Advanced Health Management
+                </span>
 
-        <!-- Main Dashboard Content -->
-        <section class="lg:col-span-3 space-y-8">
-            
-            <!-- Welcome -->
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 class="text-3xl font-bold">Welcome back, John</h1>
-                    <p class="text-gray-400">Here's what's happening with your health today.</p>
-                </div>
-                <button class="px-6 py-2.5 bg-hm-accent-blue rounded-full font-bold shadow-lg shadow-hm-accent-blue/30 hover:scale-105 transition transform">
-                    New Analysis
-                </button>
-            </div>
+                <h1 class="text-5xl md:text-7xl font-extrabold leading-tight tracking-tighter">
+                    <span class="block">Manage Health</span>
+                    <span class="block">
+                        <span class="text-hm-accent-pink">Smarter,</span>
+                        <span class="text-hm-accent-blue">Faster,</span>
+                        <span class="text-green-400">Better.</span>
+                    </span>
+                </h1>
 
-            <!-- Stats Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="p-6 rounded-2xl backdrop-blur-lg bg-hm-card/50 border border-gray-700/50">
-                    <p class="text-gray-400 text-sm">Health Score</p>
-                    <div class="flex items-baseline space-x-2 mt-2">
-                        <span class="text-4xl font-extrabold text-green-400">84</span>
-                        <span class="text-gray-500 text-sm">/100</span>
-                    </div>
-                    <p class="text-xs text-green-500 mt-2">↑ 4% from last month</p>
-                </div>
-                <div class="p-6 rounded-2xl backdrop-blur-lg bg-hm-card/50 border border-gray-700/50">
-                    <p class="text-gray-400 text-sm">Active Reports</p>
-                    <div class="flex items-baseline space-x-2 mt-2">
-                        <span class="text-4xl font-extrabold">12</span>
-                    </div>
-                    <p class="text-xs text-gray-500 mt-2">3 pending review</p>
-                </div>
-                <div class="p-6 rounded-2xl backdrop-blur-lg bg-hm-card/50 border border-gray-700/50">
-                    <p class="text-gray-400 text-sm">Next Checkup</p>
-                    <div class="flex items-baseline space-x-2 mt-2">
-                        <span class="text-2xl font-bold">Nov 14</span>
-                    </div>
-                    <p class="text-xs text-hm-accent-pink mt-2">In 8 days</p>
+                <p class="text-lg text-gray-400 max-w-xl">
+                    Experience a revolutionary way to track your medications, diet, and lifestyle with HealthMate's secure ecosystem.
+                </p>
+
+                <div class="flex space-x-4 pt-4">
+                    <a href="/signup"
+                        class="px-8 py-3 text-lg font-semibold rounded-full bg-hm-accent-blue hover:bg-hm-accent-blue/80 transition duration-300 shadow-xl shadow-hm-accent-blue/40">
+                        Create Account
+                    </a>
+                    <a href="#features"
+                        class="px-8 py-3 text-lg font-medium rounded-full bg-transparent border border-gray-700 text-gray-300 hover:border-white hover:text-white transition duration-300 flex items-center justify-center">
+                        <span>Learn More</span>
+                    </a>
                 </div>
             </div>
 
-            <!-- Upload Area -->
-            <div class="relative group">
-                <input type="file" id="file-upload" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="handleFileUpload(event)">
-                <div class="p-10 border-2 border-dashed border-gray-700 rounded-3xl bg-hm-card/30 flex flex-col items-center justify-center space-y-4 group-hover:border-hm-accent-blue transition group-hover:bg-hm-accent-blue/5">
-                    <div class="p-4 rounded-full bg-hm-accent-blue/10 text-hm-accent-blue">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+            <!-- Right Section (Activity Feed Mock) -->
+            <div class="lg:col-span-1 space-y-4">
+                <h2 class="text-xl font-bold mb-4 text-gray-300">Live Insights</h2>
+
+                <div
+                    class="p-4 rounded-xl shadow-xl border-2 border-gray-700 hover:border-hm-accent-blue transition duration-200 backdrop-blur-lg bg-hm-card/50">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2 rounded-lg bg-hm-accent-blue/20 text-hm-accent-blue">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM9 8a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1zm6.9 1a.999.999 0 00-.7-.27H14v-.77a.77.77 0 00-1.54 0v.77h-2.14a.77.77 0 000 1.54h2.14v.77a.77.77 0 001.54 0v-.77h1.2c.26 0 .5-.1.7-.27a.999.999 0 00.27-.7V9z"></path></svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-white">Secure Sync Active</p>
+                            <p class="text-xs text-gray-400">All data encrypted end-to-end.</p>
+                            <span class="text-xs text-gray-500 block mt-1">Just now</span>
+                        </div>
                     </div>
-                    <div class="text-center">
-                        <p class="text-lg font-bold">Drop your medical reports here</p>
-                        <p class="text-sm text-gray-400">PDF, PNG, or JPG (Max 10MB)</p>
+                </div>
+
+                <div
+                    class="p-4 rounded-xl shadow-xl border-2 border-gray-700 hover:border-hm-accent-pink transition duration-200 backdrop-blur-lg bg-hm-card/50">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2 rounded-lg bg-hm-accent-pink/20 text-hm-accent-pink">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"></path></svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-white">Daily Goal Reminder</p>
+                            <p class="text-xs text-gray-400">Don't forget to track your water intake.</p>
+                            <span class="text-xs text-gray-500 block mt-1">2m ago</span>
+                        </div>
                     </div>
-                    <p id="upload-status" class="hidden text-hm-accent-pink font-semibold"></p>
+                </div>
+
+                <div
+                    class="p-4 rounded-xl shadow-xl border-2 border-gray-700 hover:border-green-500 transition duration-200 backdrop-blur-lg bg-hm-card/50">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2 rounded-lg bg-green-400/20 text-green-400">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 6a1 1 0 011-1h10a1 1 0 011 1v10a1 1 0 01-1 1H5a1 1 0 01-1-1V6z"></path></svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-white">New User Onboarding</p>
+                            <p class="text-xs text-gray-400">Join 10,000+ users managing health better.</p>
+                            <span class="text-xs text-gray-500 block mt-1">5m ago</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <!-- Recent Activity Table -->
-            <div class="p-6 rounded-3xl backdrop-blur-lg bg-hm-card/50 border border-gray-700/50 overflow-hidden">
-                <h3 class="text-lg font-bold mb-6">Recent Analysis</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead>
-                            <tr class="text-gray-500 text-xs uppercase tracking-wider border-b border-gray-800">
-                                <th class="pb-4 font-medium">Type</th>
-                                <th class="pb-4 font-medium">Date</th>
-                                <th class="pb-4 font-medium">Status</th>
-                                <th class="pb-4 font-medium text-right">Result</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-sm">
-                            <tr class="border-b border-gray-800/50">
-                                <td class="py-4 font-semibold">Blood Panel (CBC)</td>
-                                <td class="py-4 text-gray-400">Oct 24, 2023</td>
-                                <td class="py-4">
-                                    <span class="px-2 py-1 rounded-md bg-green-500/10 text-green-500 text-xs">Completed</span>
-                                </td>
-                                <td class="py-4 text-right text-hm-accent-blue font-bold">View</td>
-                            </tr>
-                            <tr class="border-b border-gray-800/50">
-                                <td class="py-4 font-semibold">MRI Scan - Lumbar</td>
-                                <td class="py-4 text-gray-400">Oct 12, 2023</td>
-                                <td class="py-4">
-                                    <span class="px-2 py-1 rounded-md bg-yellow-500/10 text-yellow-500 text-xs">Pending Review</span>
-                                </td>
-                                <td class="py-4 text-right text-gray-600">Locked</td>
-                            </tr>
-                            <tr>
-                                <td class="py-4 font-semibold">Lipid Profile</td>
-                                <td class="py-4 text-gray-400">Sep 28, 2023</td>
-                                <td class="py-4">
-                                    <span class="px-2 py-1 rounded-md bg-green-500/10 text-green-500 text-xs">Completed</span>
-                                </td>
-                                <td class="py-4 text-right text-hm-accent-blue font-bold">View</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-        </section>
+        </div>
     </main>
+
+    <section id="features" class="max-w-7xl mx-auto px-6 py-20 relative z-20">
+        <h2 class="text-3xl font-bold text-center mb-12">Core Services</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="p-6 bg-hm-card/40 rounded-2xl border border-gray-800 hover:border-hm-accent-blue transition duration-300">
+                <div class="text-hm-accent-blue mb-4">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Prescriptions</h3>
+                <p class="text-gray-400 text-sm">Securely store and organize your medical records and digital prescriptions.</p>
+            </div>
+            <div class="p-6 bg-hm-card/40 rounded-2xl border border-gray-800 hover:border-orange-500 transition duration-300">
+                <div class="text-orange-500 mb-4">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-2.31 0l-6.195-2.065A2 2 0 009 11.144V7.5a2.5 2.5 0 00-5 0V14.5a2.5 2.5 0 005 0V11.144a2 2 0 001.928-1.784l6.195 2.065a2 2 0 002.31 0 2 2 0 000-3.464z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Diet Tracking</h3>
+                <p class="text-gray-400 text-sm">Manage nutritional goals and meal plans tailored to your specific condition.</p>
+            </div>
+            <div class="p-6 bg-hm-card/40 rounded-2xl border border-gray-800 hover:border-indigo-500 transition duration-300">
+                <div class="text-indigo-500 mb-4">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002-2h2a2 2 0 002 2M11 7a2 2 0 002 2H9a2 2 0 002 2z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Lifestyle</h3>
+                <p class="text-gray-400 text-sm">Monitor activity levels and wellness goals as prescribed by your doctor.</p>
+            </div>
+            <div class="p-6 bg-hm-card/40 rounded-2xl border border-gray-800 hover:border-red-500 transition duration-300">
+                <div class="text-red-500 mb-4">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.5l1.5 3 2.25-2.25 1.75 1.75 3-1.5V19a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Secure Contact</h3>
+                <p class="text-gray-400 text-sm">Communicate directly with your care provider through our secure channels.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="mt-12 border-t border-gray-800 py-10 bg-hm-card/50 backdrop-blur-md relative z-20">
+        <div class="max-w-7xl mx-auto px-6 text-center text-gray-500">
+            <p>&copy; 2025 HealthMate AI. All rights reserved.</p>
+        </div>
+    </footer>
 
 </body>
 
