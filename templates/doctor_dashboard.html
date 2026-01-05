@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthMate | Doctor Dashboard</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0A0D14; /* Deep, dark background */
+            overflow-x: hidden; 
+            transition: background-color 0.3s ease;
+        }
+
+        /* Animated Background Container */
+        #animated-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Animation Keyframes for slow, gentle movement */
+        @keyframes move-bg {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(10vw, -10vh) rotate(5deg); }
+            50% { transform: translate(0, 5vh) rotate(0deg); }
+            75% { transform: translate(-15vw, -5vh) rotate(-10deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        /* Styling for the animated color blobs */
+        .color-blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            opacity: 0.3; /* Subtle blend */
+            filter: blur(150px); /* Heavy blur for the 'jelly' effect */
+            animation: move-bg 15s infinite alternate; 
+        }
+
+        /* --- LIGHT MODE OVERRIDES --- */
+        body.light-mode {
+            background-color: #F4F6F9; /* Light BG */
+            color: #1F2937; /* Dark text (Base) */
+        }
+        body.light-mode .text-white, 
+        body.light-mode .text-gray-100,
+        body.light-mode .text-gray-300 { 
+            color: #1F2937 !important;
+        }
+        body.light-mode .text-gray-400,
+        body.light-mode .text-gray-500 {
+            color: #6B7280 !important;
+        }
+        
+        body.light-mode header {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-bottom-color: #E5E7EB !important;
+        }
+        
+        body.light-mode .bg-hm-card\/50 {
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+        
+        body.light-mode .border-gray-700 {
+            border-color: #A1A1AA !important; 
+        }
+        /* Specific card color overrides */
+        body.light-mode .bg-red-900\/40 { background-color: rgba(254, 202, 202, 0.8) !important; }
+        body.light-mode .bg-yellow-900\/40 { background-color: rgba(253, 230, 138, 0.8) !important; }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'hm-bg': '#0A0D14',
+                        'hm-card': '#1C2130',
+                        'hm-accent-pink': '#FF69B4',
+                        'hm-accent-blue': '#4A90E2',
+                    }
+                }
+            }
+        }
+        
+        function toggleTheme() {
+            const body = document.body;
+            body.classList.toggle('light-mode');
+            const isLightMode = body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLightMode ? 'light' : 'dark');
+            updateUI(isLightMode);
+        }
+
+        function updateUI(isLightMode) {
+            const iconContainer = document.getElementById('theme-toggle-icon');
+            const toggleButton = document.getElementById('theme-toggle-button');
+            
+            if (iconContainer && toggleButton) {
+                iconContainer.classList.toggle('text-gray-800', isLightMode);
+                iconContainer.classList.toggle('text-gray-400', !isLightMode);
+
+                if (isLightMode) {
+                    iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>`;
+                } else {
+                    iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>`;
+                }
+
+                toggleButton.classList.toggle('hover:bg-gray-700', !isLightMode);
+                toggleButton.classList.toggle('hover:bg-gray-200', isLightMode);
+            }
+            const welcomeText = document.getElementById('welcome-text');
+            if (welcomeText) {
+                welcomeText.classList.toggle('text-gray-800', isLightMode);
+            }
+        }
+        
+        function setInitialUI() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+            }
+            updateUI(savedTheme === 'light');
+        }
+
+        window.onload = setInitialUI;
+    </script>
+</head>
+<body class="bg-hm-bg min-h-screen text-white antialiased">
+
+    <!-- ANIMATED BLURRED BACKGROUND -->
+    <div id="animated-background">
+        <div class="color-blob bg-hm-accent-pink" style="top: -10%; left: -10%; animation-delay: 0s;"></div>
+        <div class="color-blob bg-hm-accent-blue" style="top: 30%; right: -15%; animation-delay: -10s;"></div>
+        <div class="color-blob bg-green-500" style="bottom: -20%; left: 20%; animation-delay: -20s;"></div>
+    </div>
+    <!-- END ANIMATED BLURRED BACKGROUND -->
+
+    <!-- Navigation Bar -->
+    <header class="p-4 md:p-6 border-b border-gray-800/50 backdrop-blur-md bg-hm-bg/80 sticky top-0 z-30">
+        <div class="w-full px-4 md:px-6 flex justify-between items-center">
+            <a href="/dashboard" class="text-2xl font-extrabold flex items-center space-x-2">
+                <svg class="w-6 h-6" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="150" y="0" width="200" height="200" rx="40" fill="#4A90E2"/>
+                    <rect x="300" y="150" width="200" height="200" rx="40" fill="#FF69B4"/>
+                    <rect x="0" y="150" width="200" height="200" rx="40" fill="#4A90E2"/>
+                    <rect x="150" y="300" width="200" height="200" rx="40" fill="#10B981"/>
+                </svg>
+                <span class="text-white">Health</span><span class="text-hm-accent-pink">Mate</span>
+            </a>
+            <div class="flex items-center space-x-4">
+                
+                <button id="theme-toggle-button" onclick="toggleTheme()" class="p-2 rounded-full transition duration-300">
+                    <div id="theme-toggle-icon" class="text-gray-400"></div>
+                </button>
+
+                <span id="welcome-text" class="text-sm text-gray-400 hidden sm:block">Dr. {{ user_name }}</span>
+                
+                <a href="/login" class="px-5 py-2.5 text-sm font-semibold rounded-full bg-red-600 hover:bg-red-700 transition duration-200 shadow-lg shadow-red-500/30 text-white">
+                    Logout
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Content -->
+    <main class="w-full px-4 md:px-10 mt-8 relative z-10">
+        <div class="max-w-7xl mx-auto">
+            
+            <h1 class="text-3xl font-extrabold mb-2 text-gray-100">Care Provider Dashboard</h1>
+            <p class="text-hm-accent-pink mb-8">Quickly review patient alerts and manage communications.</p>
+
+            <!-- Quick Stats/Alerts Section -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <div class="bg-hm-card/50 p-5 rounded-xl border border-red-500 shadow-xl backdrop-blur-lg">
+                    <p class="text-sm text-red-400 font-semibold">Critical Alerts</p>
+                    <p class="text-3xl font-extrabold text-red-500 mt-1">2</p>
+                    <span class="text-xs text-gray-500">Drug Interaction Warnings</span>
+                </div>
+                <div class="bg-hm-card/50 p-5 rounded-xl border border-hm-accent-blue/50 shadow-xl backdrop-blur-lg">
+                    <p class="text-sm text-hm-accent-blue font-semibold">New Messages</p>
+                    <p class="text-3xl font-extrabold text-hm-accent-blue mt-1">5</p>
+                    <span class="text-xs text-gray-500">Pending patient replies</span>
+                </div>
+                <div class="bg-hm-card/50 p-5 rounded-xl border border-yellow-500/50 shadow-xl backdrop-blur-lg">
+                    <p class="text-sm text-yellow-400 font-semibold">Appointment Requests</p>
+                    <p class="text-3xl font-extrabold text-yellow-500 mt-1">1</p>
+                    <span class="text-xs text-gray-500">Awaiting scheduling</span>
+                </div>
+                <div class="bg-hm-card/50 p-5 rounded-xl border border-green-500/50 shadow-xl backdrop-blur-lg">
+                    <p class="text-sm text-green-400 font-semibold">Active Patients</p>
+                    <p class="text-3xl font-extrabold text-green-500 mt-1">42</p>
+                    <span class="text-xs text-gray-500">Monitoring Lifestyle Goals</span>
+                </div>
+            </div>
+
+            <!-- Management Tools Section -->
+            <h2 class="text-2xl font-bold text-gray-100 mb-6">Management Tools</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- Tool 1: Patient List & Search -->
+                <div class="p-6 bg-hm-card/50 rounded-xl border border-gray-700 shadow-xl backdrop-blur-lg">
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-hm-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20v-2m0 2h-2m-3-4a6 6 0 110-12 6 6 0 010 12z"></path></svg>
+                        Patient Directory
+                    </h3>
+                    <input type="text" placeholder="Search by name, email, or UID..." 
+                        class="w-full px-4 py-2 mb-4 bg-gray-700/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-hm-accent-blue transition duration-200">
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex justify-between items-center p-3 bg-gray-800/50 rounded-lg border border-gray-700 hover:border-hm-accent-blue cursor-pointer">
+                            <span>John Doe (UID 10001)</span>
+                            <span class="text-xs text-red-400">1 Critical Alert</span>
+                        </li>
+                        <li class="flex justify-between items-center p-3 bg-gray-800/50 rounded-lg border border-gray-700 hover:border-hm-accent-blue cursor-pointer">
+                            <span>Jane Smith (UID 10002)</span>
+                            <span class="text-xs text-yellow-400">Plan Review Due</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Tool 2: Communication & Responses -->
+                <div class="p-6 bg-hm-card/50 rounded-xl border border-gray-700 shadow-xl backdrop-blur-lg">
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-hm-accent-pink" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                        Message Center
+                    </h3>
+                    <ul class="space-y-3 text-sm">
+                        <li class="p-3 bg-red-900/40 rounded-lg border border-red-500 cursor-pointer">
+                            <p class="font-semibold text-red-300">NEW: John Doe - Dosage question</p>
+                            <p class="text-xs text-red-200 mt-1 truncate">"I feel dizzy after taking the 500mg. Should I reduce it?"</p>
+                        </li>
+                        <li class="p-3 bg-yellow-900/40 rounded-lg border border-yellow-500 cursor-pointer">
+                            <p class="font-semibold text-yellow-300">Jane Smith - Diet confirmation</p>
+                            <p class="text-xs text-yellow-200 mt-1 truncate">"Is butter okay on the low-fat diet?"</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <footer class="mt-12 border-t border-gray-800 py-6 bg-hm-card/50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 text-center text-gray-500">
+            <p>&copy; 2025 HealthMate. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
