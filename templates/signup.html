@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthMate | Sign Up</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0A0D14; /* Deep, dark background */
+            overflow-x: hidden; /* Prevent horizontal scroll from background animation */
+            transition: background-color 0.3s ease;
+        }
+
+        /* Animated Background Container */
+        #animated-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Animation Keyframes for slow, gentle movement */
+        @keyframes move-bg {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(10vw, -10vh) rotate(5deg); }
+            50% { transform: translate(0, 5vh) rotate(0deg); }
+            75% { transform: translate(-15vw, -5vh) rotate(-10deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        /* Styling for the animated color blobs */
+        .color-blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            opacity: 0.3; /* Subtle blend */
+            filter: blur(150px); /* Heavy blur for the 'jelly' effect */
+            animation: move-bg 15s infinite alternate; 
+        }
+
+        /* --- LIGHT MODE OVERRIDES --- */
+        body.light-mode {
+            background-color: #F4F6F9; /* Light BG */
+            color: #1F2937; /* Dark text (Base) */
+        }
+
+        /* Text Overrides */
+        body.light-mode .text-white, 
+        body.light-mode .text-gray-100,
+        body.light-mode .text-gray-300 { 
+            color: #1F2937 !important;
+        }
+        body.light-mode .text-gray-400,
+        body.light-mode .text-gray-500 {
+            color: #6B7280 !important;
+        }
+        
+        /* Navigation and Cards (Glassmorphism effect) */
+        body.light-mode .backdrop-blur-lg,
+        body.light-mode .bg-hm-card\/50 {
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Border Overrides */
+        body.light-mode .border-gray-700 {
+            border-color: #A1A1AA !important; /* light-mode default border */
+        }
+        
+        /* Hover Border Overrides */
+        body.light-mode .hover\:border-4:hover {
+            border-color: #4A90E2 !important; /* Retain accent color on hover */
+        }
+        
+        /* Input Overrides */
+        body.light-mode input.bg-gray-700\/50 {
+            background-color: #E5E7EB; /* Lighter background for inputs */
+            color: #1F2937;
+            border-color: #D1D5DB;
+        }
+        body.light-mode input.focus\:border-hm-accent-blue:focus {
+            border-color: #4A90E2 !important;
+        }
+
+        /* Custom Toggle Switch CSS: Dark Mode (Default) */
+        .role-switch-container {
+            background-color: #1C2130; /* hm-card color */
+        }
+        .role-switch-container > span {
+            background-color: #4A90E2; /* Blue accent (User) */
+        }
+        .peer:checked ~ span {
+            background-color: #FF69B4; /* Pink accent (Doctor) */
+        }
+        
+        /* Custom Toggle Switch CSS: Light Mode Overrides */
+        body.light-mode .role-switch-container {
+            background-color: #E5E7EB; /* Light card color */
+        }
+        body.light-mode .role-switch-container > span {
+            background-color: #1F2937; /* Darker knob background (User) */
+        }
+        body.peer:checked ~ span {
+            background-color: #4A90E2; /* Blue knob background (Doctor) */
+        }
+        body.light-mode .role-switch-container label {
+            color: #4B5563; /* Default text color for labels in light mode */
+        }
+        body.light-mode .role-switch-container .peer:checked ~ label:first-of-type {
+            color: #4B5563 !important; /* User label is inactive */
+        }
+        body.light-mode .role-switch-container .peer:checked ~ label:last-of-type {
+            color: #FFFFFF !important; /* Doctor label is active */
+        }
+        body.light-mode .role-switch-container .peer:not(:checked) ~ label:first-of-type {
+            color: #FFFFFF !important; /* User label is active */
+        }
+        body.light-mode .role-switch-container .peer:not(:checked) ~ label:last-of-type {
+            color: #4B5563 !important; /* Doctor label is inactive */
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'hm-bg': '#0A0D14',
+                        'hm-card': '#1C2130',
+                        'hm-accent-pink': '#FF69B4',
+                        'hm-accent-blue': '#4A90E2',
+                    }
+                }
+            }
+        }
+        
+        function toggleTheme() {
+            const body = document.body;
+            body.classList.toggle('light-mode');
+            const isLightMode = body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLightMode ? 'light' : 'dark');
+            updateUI(isLightMode);
+        }
+
+        function updateUI(isLightMode) {
+            const iconContainer = document.getElementById('theme-toggle-icon');
+            const toggleButton = document.getElementById('theme-toggle-button');
+            
+            if (iconContainer && toggleButton) {
+                iconContainer.classList.toggle('text-gray-800', isLightMode);
+                iconContainer.classList.toggle('text-gray-400', !isLightMode);
+
+                if (isLightMode) {
+                    iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>`;
+                } else {
+                    iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>`;
+                }
+
+                toggleButton.classList.toggle('hover:bg-gray-700', !isLightMode);
+                toggleButton.classList.toggle('hover:bg-gray-200', isLightMode);
+            }
+
+            const authLink = document.getElementById('auth-link');
+            if (authLink) {
+                authLink.classList.toggle('text-gray-800', isLightMode);
+                authLink.classList.toggle('text-gray-500', !isLightMode);
+            }
+        }
+        
+        function setInitialUI() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+            }
+            updateUI(savedTheme === 'light');
+        }
+
+        window.onload = setInitialUI;
+
+        async function handleSignup(event) {
+            event.preventDefault();
+            const form = event.target;
+            const statusMessage = document.getElementById('status-message');
+            const submitButton = document.getElementById('signup-button');
+            const roleInput = document.getElementById('role-toggle');
+
+            const role = roleInput.checked ? 'doctor' : 'user';
+            statusMessage.innerHTML = '';
+
+            const data = {
+                name: form.name.value,
+                phone: form.phone.value,
+                email: form.email.value,
+                password: form.password.value,
+                confirm_password: form.confirm_password.value,
+                role: role,
+            };
+
+            if (data.password !== data.confirm_password) {
+                statusMessage.innerHTML = `<div class="bg-red-500 text-white font-bold rounded-lg p-4 mb-4 text-sm">Passwords do not match.</div>`;
+                return;
+            }
+
+            submitButton.disabled = true;
+            submitButton.innerHTML = 'Registering...';
+
+            try {
+                const response = await fetch('/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    statusMessage.innerHTML = `<div class="bg-green-500 text-white font-bold rounded-lg p-4 mb-4 text-sm">${result.message}</div>`;
+                    if (result.redirect_url) window.location.href = result.redirect_url;
+                } else {
+                    statusMessage.innerHTML = `<div class="bg-red-500 text-white font-bold rounded-lg p-4 mb-4 text-sm">${result.message || 'An unknown error occurred.'}</div>`;
+                }
+            } catch (error) {
+                statusMessage.innerHTML = `<div class="bg-red-500 text-white font-bold rounded-lg p-4 mb-4 text-sm">Network error: Could not connect to server.</div>`;
+            } finally {
+                submitButton.disabled = false;
+                submitButton.innerHTML = 'Sign Up';
+            }
+        }
+    </script>
+</head>
+<body class="bg-hm-bg min-h-screen text-white antialiased flex items-center justify-center p-4">
+
+    <!-- ANIMATED BLURRED BACKGROUND -->
+    <div id="animated-background">
+        <div class="color-blob bg-hm-accent-blue" style="top: -10%; left: -10%; animation-delay: 0s;"></div>
+        <div class="color-blob bg-hm-accent-pink" style="top: 30%; right: -15%; animation-delay: -10s;"></div>
+        <div class="color-blob bg-green-500" style="bottom: -20%; left: 20%; animation-delay: -20s;"></div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <button id="theme-toggle-button" onclick="toggleTheme()" class="p-2 rounded-full transition duration-300 fixed top-6 right-6 z-20 hover:bg-gray-700">
+        <div id="theme-toggle-icon" class="text-gray-400"></div>
+    </button>
+
+    <!-- Signup Card -->
+    <div class="w-full max-w-md p-8 bg-hm-card/50 rounded-2xl shadow-2xl border-2 border-gray-700 hover:border-4 hover:border-hm-accent-blue transition duration-300 relative z-10 backdrop-blur-lg">
+        <div class="text-center mb-8">
+            <div id="status-message">
+                {% if error %}
+                <div class="bg-red-500 text-white font-bold rounded-lg p-4 mb-4 text-sm">
+                    {{ error }}
+                </div>
+                {% endif %}
+            </div>
+            
+            <a href="/" class="text-3xl font-extrabold flex items-center justify-center space-x-2 mb-2">
+                <svg class="w-8 h-8" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="150" y="0" width="200" height="200" rx="40" fill="#4A90E2"/>
+                    <rect x="300" y="150" width="200" height="200" rx="40" fill="#FF69B4"/>
+                    <rect x="0" y="150" width="200" height="200" rx="40" fill="#4A90E2"/>
+                    <rect x="150" y="300" width="200" height="200" rx="40" fill="#10B981"/>
+                </svg>
+                <span class="text-white">Health</span><span class="text-hm-accent-pink">Mate</span>
+            </a>
+            <h1 class="text-2xl font-bold text-gray-100">Create Your Account</h1>
+            <p class="text-sm text-gray-400 mt-1">Start your journey to smarter health management.</p>
+        </div>
+
+        <form onsubmit="handleSignup(event)" class="space-y-4">
+            
+            <!-- Role Selector -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-300 mb-2 text-center">I am registering as a:</label>
+                <div class="relative w-full h-12 rounded-lg role-switch-container border border-gray-700 cursor-pointer overflow-hidden shadow-inner flex">
+                    <input type="checkbox" id="role-toggle" class="sr-only peer" />
+                    <span class="absolute w-1/2 h-full rounded-md transition-transform duration-300 peer-checked:translate-x-full"></span>
+                    <label for="role-toggle" class="w-1/2 flex items-center justify-center font-extrabold text-lg z-10 transition-colors duration-300 text-white peer-checked:text-gray-400 hover:bg-white/5">User</label>
+                    <label for="role-toggle" class="w-1/2 flex items-center justify-center font-extrabold text-lg z-10 transition-colors duration-300 text-gray-400 peer-checked:text-white hover:bg-white/5">Doctor</label>
+                </div>
+            </div>
+
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-300 mb-1">Full Name</label>
+                <input type="text" id="name" name="name" required
+                        class="w-full px-4 py-2 bg-gray-700/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-hm-accent-blue transition duration-200">
+            </div>
+            
+            <div>
+                <label for="phone" class="block text-sm font-medium text-gray-300 mb-1">Phone Number</label>
+                <input type="tel" id="phone" name="phone" required
+                        class="w-full px-4 py-2 bg-gray-700/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-hm-accent-blue transition duration-200">
+            </div>
+
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email Address</label>
+                <input type="email" id="email" name="email" required
+                        class="w-full px-4 py-2 bg-gray-700/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-hm-accent-blue transition duration-200">
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-300 mb-1">Password</label>
+                <input type="password" id="password" name="password" required
+                        class="w-full px-4 py-2 bg-gray-700/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-hm-accent-blue transition duration-200">
+            </div>
+
+            <div>
+                <label for="confirm_password" class="block text-sm font-medium text-gray-300 mb-1">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" required
+                        class="w-full px-4 py-2 bg-gray-700/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-hm-accent-blue transition duration-200">
+            </div>
+
+            <button type="submit" id="signup-button"
+                    class="w-full py-3 mt-6 text-base font-semibold rounded-lg bg-hm-accent-blue hover:bg-hm-accent-blue/80 transition duration-300 shadow-lg shadow-hm-accent-blue/40">
+                Sign Up
+            </button>
+        </form>
+
+        <p id="auth-link" class="text-center text-sm text-gray-500 mt-6">
+            Already have an account? <a href="/login" class="text-hm-accent-pink hover:text-white font-medium transition duration-200">Log In</a>
+        </p>
+    </div>
+
+</body>
+</html>

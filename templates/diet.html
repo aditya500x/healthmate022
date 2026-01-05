@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthMate | Diet Plan</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0A0D14; /* Deep, dark background */
+            overflow-x: hidden;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Animated Background Container */
+        #animated-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Animation Keyframes for slow, gentle movement */
+        @keyframes move-bg {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(10vw, -10vh) rotate(5deg); }
+            50% { transform: translate(0, 5vh) rotate(0deg); }
+            75% { transform: translate(-15vw, -5vh) rotate(-10deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        /* Styling for the animated color blobs */
+        .color-blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            opacity: 0.3;
+            filter: blur(150px);
+            animation: move-bg 15s infinite alternate; 
+        }
+
+        /* --- LIGHT MODE OVERRIDES --- */
+        body.light-mode {
+            background-color: #F4F6F9;
+            color: #1F2937;
+        }
+        body.light-mode .text-white, body.light-mode .text-gray-100, body.light-mode .text-gray-300 { color: #1F2937 !important; }
+        body.light-mode .text-gray-400, body.light-mode .text-gray-500 { color: #6B7280 !important; }
+        body.light-mode header {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-bottom-color: #E5E7EB !important;
+        }
+        body.light-mode .backdrop-blur-lg, body.light-mode .bg-hm-card\/50 { background-color: rgba(255, 255, 255, 0.7); }
+        body.light-mode .border-gray-700 { border-color: #A1A1AA !important; }
+        body.light-mode .hover\:border-4:hover { border-color: #1F2937 !important; }
+        body.light-mode .hover\:border-hm-accent-blue:hover { border-color: #4A90E2 !important; }
+        body.light-mode .hover\:border-orange-500:hover { border-color: #F97316 !important; }
+        
+        /* Light mode specific classes for this page */
+        body.light-mode .bg-gray-800 { background-color: #E5E7EB !important; }
+        body.light-mode .text-orange-400 { color: #F97316 !important; }
+        body.light-mode .bg-orange-500\/10 { background-color: rgba(249, 115, 22, 0.1) !important; }
+
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'hm-bg': '#0A0D14',
+                        'hm-card': '#1C2130',
+                        'hm-accent-pink': '#FF69B4',
+                        'hm-accent-blue': '#4A90E2',
+                    }
+                }
+            }
+        }
+        
+        function toggleTheme() {
+            const body = document.body;
+            body.classList.toggle('light-mode');
+            const isLightMode = body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLightMode ? 'light' : 'dark');
+            updateUI(isLightMode);
+        }
+
+        function updateUI(isLightMode) {
+            const iconContainer = document.getElementById('theme-toggle-icon');
+            const toggleButton = document.getElementById('theme-toggle-button');
+            
+            if (iconContainer && toggleButton) {
+                iconContainer.classList.toggle('text-gray-800', isLightMode);
+                iconContainer.classList.toggle('text-gray-400', !isLightMode);
+
+                if (isLightMode) {
+                    iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>`;
+                } else {
+                    iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>`;
+                }
+
+                toggleButton.classList.toggle('hover:bg-gray-700', !isLightMode);
+                toggleButton.classList.toggle('hover:bg-gray-200', isLightMode);
+            }
+            
+            const welcomeText = document.getElementById('welcome-text');
+            if (welcomeText) {
+                welcomeText.classList.toggle('text-gray-800', isLightMode);
+            }
+        }
+        
+        function setInitialUI() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+            }
+            updateUI(savedTheme === 'light');
+        }
+
+        window.onload = setInitialUI;
+    </script>
+</head>
+<body class="bg-hm-bg min-h-screen text-white antialiased">
+
+    <!-- ANIMATED BLURRED BACKGROUND -->
+    <div id="animated-background">
+        <div class="color-blob bg-hm-accent-blue" style="top: -10%; left: -10%; animation-delay: 0s;"></div>
+        <div class="color-blob bg-hm-accent-pink" style="top: 30%; right: -15%; animation-delay: -10s;"></div>
+        <div class="color-blob bg-green-500" style="bottom: -20%; left: 20%; animation-delay: -20s;"></div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <header class="p-4 md:p-6 border-b border-gray-800/50 backdrop-blur-md bg-hm-bg/80 sticky top-0 z-30">
+        <div class="w-full px-4 md:px-6 flex justify-between items-center">
+            <a href="/dashboard?uid={{ uid }}" class="text-2xl font-extrabold flex items-center space-x-2">
+                <svg class="w-6 h-6" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="150" y="0" width="200" height="200" rx="40" fill="#4A90E2"/>
+                    <rect x="300" y="150" width="200" height="200" rx="40" fill="#FF69B4"/>
+                    <rect x="0" y="150" width="200" height="200" rx="40" fill="#4A90E2"/>
+                    <rect x="150" y="300" width="200" height="200" rx="40" fill="#10B981"/>
+                </svg>
+                <span class="text-white">Health</span><span class="text-hm-accent-pink">Mate</span>
+            </a>
+            <div class="flex items-center space-x-4">
+                <button id="theme-toggle-button" onclick="toggleTheme()" class="p-2 rounded-full transition duration-300">
+                    <div id="theme-toggle-icon" class="text-gray-400"></div>
+                </button>
+                <span id="welcome-text" class="text-sm text-gray-400 hidden sm:block">Welcome, {{ user_name }}</span>
+                <a href="/dashboard?uid={{ uid }}" class="px-5 py-2.5 text-sm font-semibold rounded-full bg-gray-700 hover:bg-gray-600 transition duration-200">
+                    <span class="hidden sm:inline">Back to</span> Dashboard
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="w-full px-4 md:px-10 mt-8 relative z-10">
+        <div class="max-w-7xl mx-auto">
+            
+            <div class="flex items-center space-x-3 mb-6">
+                <a href="/dashboard?uid={{ uid }}" class="text-gray-500 hover:text-hm-accent-blue transition duration-200 text-sm">&larr; Dashboard</a>
+                <span class="text-gray-600 text-sm">/</span>
+                <h1 class="text-3xl font-bold text-gray-100">Personalized Diet Plan</h1>
+            </div>
+
+            <p class="text-gray-400 mb-8 max-w-3xl">Track your nutritional goals and follow your custom meal plan generated based on your health profile.</p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                
+                <!-- Tracker Column -->
+                <aside class="lg:col-span-1 space-y-6">
+                    <div class="p-6 bg-hm-card/50 rounded-xl shadow-xl border-2 border-gray-700 backdrop-blur-lg">
+                        <h2 class="text-xl font-semibold mb-4 text-orange-400">Intake Today</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span class="text-white">Calories</span>
+                                    <span class="font-bold text-orange-400">1450 / 2200 kcal</span>
+                                </div>
+                                <div class="w-full bg-gray-700 rounded-full h-2">
+                                    <div class="bg-orange-500 h-2 rounded-full" style="width: 65%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span class="text-white">Protein</span>
+                                    <span class="font-bold text-gray-300">85 / 120 g</span>
+                                </div>
+                                <div class="w-full bg-gray-700 rounded-full h-2">
+                                    <div class="bg-hm-accent-blue h-2 rounded-full" style="width: 70%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-hm-card/50 rounded-xl shadow-xl border-2 border-gray-700 backdrop-blur-lg">
+                        <h2 class="text-xl font-semibold mb-4 text-white">Quick Log</h2>
+                        <form onsubmit="event.preventDefault();">
+                            <input type="text" placeholder="Meal name or calories..." 
+                                class="w-full p-3 mb-3 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:ring-orange-500 focus:border-orange-500">
+                            <button type="button" class="w-full py-3 rounded-lg bg-orange-600 hover:bg-orange-700 transition duration-200 text-white font-bold">
+                                Log Meal
+                            </button>
+                        </form>
+                    </div>
+                </aside>
+
+                <!-- Weekly Plan Column -->
+                <div class="lg:col-span-3">
+                    <div class="p-8 bg-hm-card/50 rounded-xl shadow-2xl border-2 border-gray-700 h-full backdrop-blur-lg">
+                        <h2 class="text-2xl font-bold mb-6 text-orange-300 border-b border-gray-700 pb-2">Weekly Schedule</h2>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-700">
+                                <thead class="bg-gray-800">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Day</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Breakfast</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Lunch</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Dinner</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-700 bg-hm-card">
+                                    <tr class="bg-orange-500/10 border-l-4 border-orange-500">
+                                        <td class="px-6 py-4 text-sm font-extrabold text-orange-400 uppercase">Today</td>
+                                        <td class="px-6 py-4 text-sm text-gray-300">Oatmeal & Berries</td>
+                                        <td class="px-6 py-4 text-sm text-gray-300">Grilled Chicken Salad</td>
+                                        <td class="px-6 py-4 text-sm text-gray-300">Salmon & Asparagus</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 text-sm font-medium text-white">Monday</td>
+                                        <td class="px-6 py-4 text-sm text-gray-300">Scrambled Eggs</td>
+                                        <td class="px-6 py-4 text-sm text-gray-300">Lentil Soup</td>
+                                        <td class="px-6 py-4 text-sm text-gray-300">Turkey Stir-fry</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

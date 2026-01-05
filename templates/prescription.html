@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthMate | Prescription Analysis</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0A0D14; /* Deep, dark background */
+            overflow-x: hidden; /* Prevent horizontal scroll from background animation */
+            transition: background-color 0.3s ease;
+        }
+
+        /* Animated Background Container */
+        #animated-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Animation Keyframes for slow, gentle movement */
+        @keyframes move-bg {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(10vw, -10vh) rotate(5deg); }
+            50% { transform: translate(0, 5vh) rotate(0deg); }
+            75% { transform: translate(-15vw, -5vh) rotate(-10deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        /* Styling for the animated color blobs */
+        .color-blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            opacity: 0.3; /* Subtle blend */
+            filter: blur(150px); /* Heavy blur for the 'jelly' effect */
+            animation: move-bg 15s infinite alternate;  
+        }
+
+        /* --- LIGHT MODE OVERRIDES --- */
+        body.light-mode {
+            background-color: #F4F6F9; /* Light BG */
+            color: #1F2937; /* Dark text (Base) */
+        }
+        body.light-mode .text-white, body.light-mode .text-gray-100, body.light-mode .text-gray-300 { color: #1F2937 !important; }
+        body.light-mode .text-gray-400, body.light-mode .text-gray-500 { color: #6B7280 !important; }
+        body.light-mode header {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-bottom-color: #E5E7EB !important;
+        }
+        body.light-mode .backdrop-blur-lg, body.light-mode .bg-hm-card\/50 { background-color: rgba(255, 255, 255, 0.7); }
+        body.light-mode .border-gray-700 { border-color: #A1A1AA !important; }
+        body.light-mode .hover\:border-4:hover { border-color: #1F2937 !important; }
+        body.light-mode .hover\:border-hm-accent-blue:hover { border-color: #4A90E2 !important; }
+        body.light-mode .hover\:border-orange-500:hover { border-color: #F97316 !important; }
+        body.light-mode .hover\:border-indigo-500:hover { border-color: #6366F1 !important; }
+        body.light-mode .hover\:border-red-500:hover { border-color: #EF4444 !important; }
+        body.light-mode .hover\:border-hm-accent-pink:hover { border-color: #FF69B4 !important; }
+        /* Light mode specific classes for this page */
+        body.light-mode .bg-gray-800 { background-color: #E5E7EB !important; }
+        body.light-mode .text-purple-400 { color: #9333EA !important; }
+        body.light-mode .bg-purple-500\/10 { background-color: rgba(147, 51, 234, 0.1) !important; }
+        body.light-mode .bg-yellow-900\/30 { background-color: rgba(253, 230, 138, 0.8) !important; border-color: #FBBF24 !important;}
+        body.light-mode .text-red-300 { color: #DC2626 !important; }
+
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'hm-bg': '#0A0D14',
+                        'hm-card': '#1C2130',
+                        'hm-accent-pink': '#FF69B4',
+                        'hm-accent-blue': '#4A90E2',
+                    }
+                }
+            }
+        }
+        
+        function toggleTheme() {
+            const body = document.body;
+            body.classList.toggle('light-mode');
+            const isLightMode = body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLightMode ? 'light' : 'dark');
+            updateUI(isLightMode);
+        }
+
+        function updateUI(isLightMode) {
+            const iconContainer = document.getElementById('theme-toggle-icon');
+            const toggleButton = document.getElementById('theme-toggle-button');
+            
+            if (iconContainer && toggleButton) {
+                iconContainer.classList.toggle('text-gray-800', isLightMode);
+                iconContainer.classList.toggle('text-gray-400', !isLightMode);
+
+                if (isLightMode) {
+                    iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>`;
+                } else {
+                    iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>`;
+                }
+
+                toggleButton.classList.toggle('hover:bg-gray-700', !isLightMode);
+                toggleButton.classList.toggle('hover:bg-gray-200', isLightMode);
+            }
+            
+            const settingsIcon = document.getElementById('settings-icon');
+            if (settingsIcon) {
+                settingsIcon.classList.toggle('text-gray-800', isLightMode);
+                settingsIcon.classList.toggle('hover:text-gray-900', isLightMode);
+                settingsIcon.classList.toggle('hover:text-white', !isLightMode);
+            }
+
+            const welcomeText = document.getElementById('welcome-text');
+            if (welcomeText) {
+                welcomeText.classList.toggle('text-gray-800', isLightMode);
+            }
+        }
+        
+        function setInitialUI() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+            }
+            updateUI(savedTheme === 'light');
+        }
+
+
+        // --- FILE UPLOAD AND ANALYSIS LOGIC ---
+
+        async function handleFileUpload(file) {
+            const resultsDiv = document.getElementById('analysis-results-content');
+            const statusMessageDiv = document.getElementById('status-message');
+            const submitButton = document.getElementById('submit-analysis-btn');
+
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            // Show loading state
+            statusMessageDiv.innerHTML = '<div class="text-yellow-400 font-semibold flex items-center justify-center space-x-2"><svg class="animate-spin h-5 w-5 text-yellow-400" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-dasharray="20 180" fill="none"></circle></svg>Running OCR and Analysis...</div>';
+            resultsDiv.innerHTML = '<p class="text-gray-500 text-center py-12">Analysis in progress...</p>'; // Clear old results
+            submitButton.disabled = true;
+
+            try {
+                // Send the file to the FastAPI endpoint
+                const response = await fetch('/api/analyze-prescription', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Success
+                    statusMessageDiv.innerHTML = '<div class="text-green-400 font-semibold">Analysis Complete! Review medications below.</div>';
+                    displayResults(result); 
+                } else {
+                    // Failure
+                    statusMessageDiv.innerHTML = `<div class="text-red-500 font-semibold">Error: ${result.message || 'Server failed to process the image.'}</div>`;
+                    resultsDiv.innerHTML = '<p class="text-red-500 text-center py-12">Analysis failed. Check the status message.</p>';
+                }
+
+            } catch (error) {
+                // Network failure
+                console.error("Network or fetch error:", error);
+                statusMessageDiv.innerHTML = '<div class="text-red-500 font-semibold">Network Error. Check console for details.</div>';
+                 resultsDiv.innerHTML = '<p class="text-red-500 text-center py-12">Network error during submission.</p>';
+            } finally {
+                submitButton.disabled = false;
+            }
+        }
+        
+        function displayResults(result) {
+            const resultsDiv = document.getElementById('analysis-results-content');
+            const medications = result.medications;
+            const interactions = result.interactions;
+            const rawTextSnippet = result.raw_text_snippet;
+            const accuracy = result.accuracy_score;
+            
+            let htmlContent = '';
+            
+            // 1. Display Accuracy Score
+            const accuracyBox = document.getElementById('accuracy-box');
+            let accColor = 'bg-red-600';
+            if (accuracy > 75) { accColor = 'bg-green-600'; }
+            else if (accuracy > 50) { accColor = 'bg-yellow-600'; }
+            
+            accuracyBox.innerHTML = `
+                <span class="text-xs text-white font-medium">Accuracy</span>
+                <span class="text-xl font-extrabold text-white">${accuracy}%</span>
+            `;
+            accuracyBox.className = `w-24 h-16 p-2 rounded-lg flex flex-col items-center justify-center shadow-md ml-4 ${accColor}`;
+
+            // 2. Display Interaction Alerts
+            if (interactions.length > 0) {
+                htmlContent += `
+                    <div class="space-y-3 mb-6">
+                        <h3 class="text-xl font-bold text-red-500">Interaction Alerts (${interactions.length})</h3>
+                `;
+                interactions.forEach(warning => {
+                    htmlContent += `
+                        <div class="bg-red-900/30 border border-red-700 p-4 rounded-lg flex items-start space-x-3">
+                            <svg class="w-6 h-6 text-red-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.332 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            <p class="text-sm text-red-300">${warning}</p>
+                        </div>
+                    `;
+                });
+                htmlContent += `</div>`;
+            } else {
+                 htmlContent += `
+                    <div class="space-y-3 mb-6">
+                        <h3 class="text-xl font-bold text-green-500">Interaction Alerts (0)</h3>
+                        <div class="bg-green-900/30 border border-green-700 p-4 rounded-lg flex items-start space-x-3">
+                            <svg class="w-6 h-6 text-green-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <p class="text-sm text-green-300">No known critical drug-drug interactions found based on extracted data.</p>
+                        </div>
+                    </div>`;
+            }
+
+            // 3. Display Medications List
+            if (medications.length > 0 && !medications[0].startsWith("Could not extract")) {
+                let medListHtml = '';
+                medications.forEach(med => {
+                    medListHtml += `<li class="p-3 bg-gray-800/50 rounded-lg text-gray-100 font-medium border border-gray-700 hover:border-purple-400 transition duration-200">${med}</li>`;
+                });
+                htmlContent += `<h3 class="text-xl font-bold text-white mb-3">Identified Medications</h3><ul class="space-y-3">${medListHtml}</ul>`;
+            } else {
+                htmlContent += `<h3 class="text-xl font-bold text-white mb-3">Identified Medications</h3>`;
+                htmlContent += `<div class="bg-yellow-900/30 border border-yellow-700 p-4 rounded-lg text-yellow-300 font-medium">${medications[0]}</div>`;
+            }
+            
+            // 4. Display Raw Text Snippet
+            htmlContent += `
+                <div class="mt-8 pt-4 border-t border-gray-800">
+                    <h4 class="text-md font-semibold text-gray-500 mb-2">Raw OCR Snippet (Debugging)</h4>
+                    <p class="text-xs text-gray-600 whitespace-pre-wrap">${rawTextSnippet}</p>
+                </div>
+            `;
+            
+            resultsDiv.innerHTML = htmlContent;
+        }
+
+        function triggerAnalysis(event) {
+            event.preventDefault();
+            const fileInput = document.getElementById('prescription-file');
+            if (fileInput.files.length > 0) {
+                handleFileUpload(fileInput.files[0]);
+            } else {
+                document.getElementById('status-message').innerHTML = '<div class="text-yellow-500 font-semibold">Please select a file to upload.</div>';
+            }
+        }
+
+        function setupDragAndDrop() {
+            const dropArea = document.getElementById('drop-area');
+            const fileInput = document.getElementById('prescription-file');
+
+            dropArea.addEventListener('click', (e) => {
+                e.stopPropagation(); 
+                if (!document.getElementById('submit-analysis-btn').disabled) {
+                    fileInput.click();
+                }
+            });
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, () => dropArea.classList.add('border-hm-accent-pink'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, () => dropArea.classList.remove('border-hm-accent-pink'), false);
+            });
+
+            dropArea.addEventListener('drop', handleDrop, false);
+            
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    triggerAnalysis({ preventDefault: () => {} });
+                }
+            }, false);
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            function handleDrop(e) {
+                let dt = e.dataTransfer;
+                let files = dt.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    triggerAnalysis({ preventDefault: () => {} });
+                }
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            setInitialUI();
+            setupDragAndDrop();
+        });
+
+    </script>
+</head>
+<body class="bg-hm-bg min-h-screen text-white antialiased">
+
+    <!-- ANIMATED BLURRED BACKGROUND -->
+    <div id="animated-background">
+        <div class="color-blob bg-hm-accent-blue" style="top: -10%; left: -10%; animation-delay: 0s;"></div>
+        <div class="color-blob bg-hm-accent-pink" style="top: 30%; right: -15%; animation-delay: -10s;"></div>
+        <div class="color-blob bg-green-500" style="bottom: -20%; left: 20%; animation-delay: -20s;"></div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <header class="p-4 md:p-6 border-b border-gray-800/50 backdrop-blur-md bg-hm-bg/80 sticky top-0 z-30">
+        <div class="w-full px-4 md:px-6 flex justify-between items-center">
+            <a href="/dashboard?uid={{ uid }}" class="text-2xl font-extrabold flex items-center space-x-2">
+                <svg class="w-6 h-6" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="150" y="0" width="200" height="200" rx="40" fill="#4A90E2"/>
+                    <rect x="300" y="150" width="200" height="200" rx="40" fill="#FF69B4"/>
+                    <rect x="0" y="150" width="200" height="200" rx="40" fill="#4A90E2"/>
+                    <rect x="150" y="300" width="200" height="200" rx="40" fill="#10B981"/>
+                </svg>
+                <span class="text-white">Health</span><span class="text-hm-accent-pink">Mate</span>
+            </a>
+            <div class="flex items-center space-x-4">
+                <button id="theme-toggle-button" onclick="toggleTheme()" class="p-2 rounded-full transition duration-300">
+                    <div id="theme-toggle-icon" class="text-gray-400"></div>
+                </button>
+                <span id="welcome-text" class="text-sm text-gray-400 hidden sm:block">Welcome, {{ user_name }}</span>
+                <a href="/dashboard?uid={{ uid }}" class="px-5 py-2.5 text-sm font-semibold rounded-full bg-gray-700 hover:bg-gray-600 transition duration-200">
+                    <span class="hidden sm:inline">Back to</span> Dashboard
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="w-full px-4 md:px-10 mt-8 relative z-10">
+        <div class="max-w-7xl mx-auto">
+            
+            <div class="flex items-center space-x-3 mb-6">
+                <a href="/dashboard?uid={{ uid }}" class="text-gray-500 hover:text-hm-accent-blue transition duration-200 text-sm">&larr; Dashboard</a>
+                <span class="text-gray-600 text-sm">/</span>
+                <h1 class="text-3xl font-bold text-gray-100">Prescription Analysis</h1>
+            </div>
+
+            <p class="text-gray-400 mb-8 max-w-3xl">Upload an image of a medical prescription (handwritten or typed) for instant medication detection.</p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Left Column: Upload & Input -->
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="p-6 bg-hm-card/50 rounded-xl shadow-xl border-2 border-gray-700 backdrop-blur-lg">
+                        <h2 class="text-xl font-semibold mb-4 text-white">Upload Prescription Image</h2>
+                        
+                        <div id="drop-area" class="border-4 border-dashed border-purple-500/50 rounded-lg p-10 text-center transition duration-300 cursor-pointer">
+                            <svg class="w-10 h-10 mx-auto mb-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 014 4v2m-5-4H9m6 4h-6"></path></svg>
+                            <p class="text-md font-medium text-white">Drag files here or <span class="text-purple-400 hover:text-purple-300 cursor-pointer">Click to Upload</span></p>
+                            <p class="text-xs text-gray-500 mt-1">PNG, JPG, or PDF (Max 10MB)</p>
+                            <input type="file" id="prescription-file" accept="image/*,application/pdf" class="hidden">
+                        </div>
+                        
+                        <div id="status-message" class="text-center mt-4">
+                            <div class="text-gray-500 text-sm">Awaiting file upload...</div>
+                        </div>
+
+                        <button id="submit-analysis-btn" onclick="triggerAnalysis(event)"
+                            class="w-full mt-4 py-3 rounded-lg bg-purple-600 hover:bg-purple-700 transition duration-200 text-white font-bold shadow-lg shadow-purple-500/30">
+                            Run AI Analysis
+                        </button>
+                    </div>
+
+                    <div class="p-6 bg-hm-card/50 rounded-xl shadow-xl border-2 border-gray-700 backdrop-blur-lg">
+                        <h2 class="text-xl font-semibold mb-4 text-white">Recent Analysis</h2>
+                        <ul class="space-y-3 text-sm">
+                            <li class="p-3 bg-gray-800 rounded-lg flex justify-between items-center text-gray-300 hover:bg-gray-700 transition duration-200">
+                                <span>Dr. Khan - 2025-05-10</span>
+                                <span class="text-purple-400">View &rarr;</span>
+                            </li>
+                            <li class="p-3 bg-gray-800 rounded-lg flex justify-between items-center text-gray-300 hover:bg-gray-700 transition duration-200">
+                                <span>Physio Script - 2025-04-22</span>
+                                <span class="text-purple-400">View &rarr;</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Right Column: Results Display -->
+                <div class="lg:col-span-2">
+                    <div class="p-8 bg-hm-card/50 rounded-xl shadow-2xl border-2 border-gray-700 h-full backdrop-blur-lg">
+                        
+                        <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-2">
+                            <h2 class="text-2xl font-bold text-white">Analysis Results</h2>
+                            <div id="accuracy-box" class="w-24 h-16 p-2 rounded-lg flex flex-col items-center justify-center shadow-md bg-gray-600">
+                                <span class="text-xs text-white font-medium">Accuracy</span>
+                                <span class="text-xl font-extrabold text-white">N/A</span>
+                            </div>
+                        </div>
+
+                        <div id="analysis-results-content" class="space-y-4">
+                             <p class="text-gray-500 text-center py-12">Upload a file to begin the AI prescription analysis.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

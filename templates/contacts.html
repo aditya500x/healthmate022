@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthMate | Secure Contact</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0A0D14; /* Deep, dark background */
+            overflow-x: hidden;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Animated Background Container */
+        #animated-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Animation Keyframes for slow, gentle movement */
+        @keyframes move-bg {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(10vw, -10vh) rotate(5deg); }
+            50% { transform: translate(0, 5vh) rotate(0deg); }
+            75% { transform: translate(-15vw, -5vh) rotate(-10deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        /* Styling for the animated color blobs */
+        .color-blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            opacity: 0.3;
+            filter: blur(150px);
+            animation: move-bg 15s infinite alternate; 
+        }
+
+        /* --- LIGHT MODE OVERRIDES --- */
+        body.light-mode {
+            background-color: #F4F6F9;
+            color: #1F2937;
+        }
+        body.light-mode .text-white, body.light-mode .text-gray-100, body.light-mode .text-gray-300 { color: #1F2937 !important; }
+        body.light-mode .text-gray-400, body.light-mode .text-gray-500 { color: #6B7280 !important; }
+        body.light-mode header {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-bottom-color: #E5E7EB !important;
+        }
+        body.light-mode .backdrop-blur-lg, body.light-mode .bg-hm-card\/50 { background-color: rgba(255, 255, 255, 0.7); }
+        body.light-mode .border-gray-700 { border-color: #A1A1AA !important; }
+        body.light-mode .hover\:border-4:hover { border-color: #1F2937 !important; }
+        body.light-mode .hover\:border-hm-accent-blue:hover { border-color: #4A90E2 !important; }
+        
+        /* Light mode specific classes for this page */
+        body.light-mode .bg-gray-800 { background-color: #E5E7EB !important; }
+        body.light-mode .text-red-400 { color: #DC2626 !important; } 
+        body.light-mode .bg-red-500\/10 { background-color: rgba(239, 68, 68, 0.1) !important; } 
+        body.light-mode .bg-red-600 { background-color: #DC2626 !important; } 
+        body.light-mode .hover\:bg-red-700:hover { background-color: #B91C1C !important; }
+        body.light-mode .bg-blue-600 { background-color: #2563EB !important; } 
+        body.light-mode .hover\:bg-blue-700:hover { background-color: #1D4ED8 !important; }
+        body.light-mode .text-blue-200 { color: #BFDBFE !important; }
+
+        /* Custom scrollbar for chat window */
+        .chat-box::-webkit-scrollbar {
+            width: 8px;
+        }
+        .chat-box::-webkit-scrollbar-track {
+            background: #1C2130;
+        }
+        .chat-box::-webkit-scrollbar-thumb {
+            background: #4B5563;
+            border-radius: 4px;
+        }
+        .chat-box::-webkit-scrollbar-thumb:hover {
+            background: #6B7280;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'hm-bg': '#0A0D14',
+                        'hm-card': '#1C2130',
+                        'hm-accent-pink': '#FF69B4',
+                        'hm-accent-blue': '#4A90E2',
+                    }
+                }
+            }
+        }
+        
+        function toggleTheme() {
+            const body = document.body;
+            body.classList.toggle('light-mode');
+            const isLightMode = body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLightMode ? 'light' : 'dark');
+            updateUI(isLightMode);
+        }
+
+        function updateUI(isLightMode) {
+            const iconContainer = document.getElementById('theme-toggle-icon');
+            const toggleButton = document.getElementById('theme-toggle-button');
+            
+            if (iconContainer && toggleButton) {
+                iconContainer.classList.toggle('text-gray-800', isLightMode);
+                iconContainer.classList.toggle('text-gray-400', !isLightMode);
+
+                if (isLightMode) {
+                    iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>`;
+                } else {
+                    iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>`;
+                }
+
+                toggleButton.classList.toggle('hover:bg-gray-700', !isLightMode);
+                toggleButton.classList.toggle('hover:bg-gray-200', isLightMode);
+            }
+            
+            const settingsIcon = document.getElementById('settings-icon');
+            if (settingsIcon) {
+                settingsIcon.classList.toggle('text-gray-800', isLightMode);
+                settingsIcon.classList.toggle('hover:text-gray-900', isLightMode);
+                settingsIcon.classList.toggle('hover:text-white', !isLightMode);
+            }
+
+            const welcomeText = document.getElementById('welcome-text');
+            if (welcomeText) {
+                welcomeText.classList.toggle('text-gray-800', isLightMode);
+            }
+        }
+        
+        function setInitialUI() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+            }
+            updateUI(savedTheme === 'light');
+        }
+
+        window.onload = setInitialUI;
+    </script>
+</head>
+<body class="bg-hm-bg min-h-screen text-white antialiased">
+
+    <!-- ANIMATED BLURRED BACKGROUND -->
+    <div id="animated-background">
+        <div class="color-blob bg-hm-accent-blue" style="top: -10%; left: -10%; animation-delay: 0s;"></div>
+        <div class="color-blob bg-hm-accent-pink" style="top: 30%; right: -15%; animation-delay: -10s;"></div>
+        <div class="color-blob bg-green-500" style="bottom: -20%; left: 20%; animation-delay: -20s;"></div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <header class="p-4 md:p-6 border-b border-gray-800/50 backdrop-blur-md bg-hm-bg/80 sticky top-0 z-30">
+        <div class="w-full px-4 md:px-6 flex justify-between items-center">
+            <a href="/dashboard?uid={{ uid }}" class="text-2xl font-extrabold flex items-center space-x-2">
+                <svg class="w-6 h-6" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="150" y="0" width="200" height="200" rx="40" fill="#4A90E2"/>
+                    <rect x="300" y="150" width="200" height="200" rx="40" fill="#FF69B4"/>
+                    <rect x="0" y="150" width="200" height="200" rx="40" fill="#4A90E2"/>
+                    <rect x="150" y="300" width="200" height="200" rx="40" fill="#10B981"/>
+                </svg>
+                <span class="text-white">Health</span><span class="text-hm-accent-pink">Mate</span>
+            </a>
+            <div class="flex items-center space-x-4">
+                <button id="theme-toggle-button" onclick="toggleTheme()" class="p-2 rounded-full transition duration-300">
+                    <div id="theme-toggle-icon" class="text-gray-400"></div>
+                </button>
+                <span id="welcome-text" class="text-sm text-gray-400 hidden sm:block">Welcome, {{ user_name }}</span>
+                <a href="/dashboard?uid={{ uid }}" class="px-5 py-2.5 text-sm font-semibold rounded-full bg-gray-700 hover:bg-gray-600 transition duration-200">
+                    <span class="hidden sm:inline">Back to</span> Dashboard
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="w-full px-4 md:px-10 mt-8 relative z-10">
+        <div class="max-w-7xl mx-auto">
+            
+            <div class="flex items-center space-x-3 mb-6">
+                <a href="/dashboard?uid={{ uid }}" class="text-gray-500 hover:text-hm-accent-blue transition duration-200 text-sm">&larr; Dashboard</a>
+                <span class="text-gray-600 text-sm">/</span>
+                <h1 class="text-3xl font-bold text-gray-100">Contact Your Care Team</h1>
+            </div>
+
+            <p class="text-gray-400 mb-8 max-w-3xl">Use the secure messenger to chat with your designated care team or request a new appointment.</p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 h-[75vh]">
+                
+                <!-- Left Column: Secure Messaging -->
+                <div class="lg:col-span-2 flex flex-col h-full">
+                    <div class="flex-grow flex flex-col bg-hm-card/50 rounded-xl shadow-xl border-2 border-gray-700 backdrop-blur-lg overflow-hidden">
+                        
+                        <!-- Chat Header -->
+                        <div class="p-4 border-b border-gray-700 bg-gray-800/50 flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center font-bold text-white">DS</div>
+                            <div>
+                                <h2 class="text-lg font-semibold text-white">Dr. Sarah Johnson, MD</h2>
+                                <p class="text-xs text-green-400 flex items-center">
+                                    <span class="h-2 w-2 rounded-full bg-green-400 mr-1"></span> Online
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Chat Messages Area -->
+                        <div class="chat-box p-4 space-y-4 overflow-y-auto flex-grow">
+                            <div class="text-center text-xs text-gray-500 pt-2">Conversation started today</div>
+                            
+                            <!-- Doctor Message -->
+                            <div class="flex justify-start">
+                                <div class="max-w-xs md:max-w-md bg-gray-700 p-3 rounded-xl rounded-tl-none shadow-md">
+                                    <p class="text-sm text-gray-100">Hello! I see you checked your diet plan. Do you have any immediate questions about the new regimen?</p>
+                                    <span class="text-xs text-gray-400 block mt-1 text-right">09:30 AM</span>
+                                </div>
+                            </div>
+
+                            <!-- User Message -->
+                            <div class="flex justify-end">
+                                <div class="max-w-xs md:max-w-md bg-red-600 p-3 rounded-xl rounded-tr-none shadow-md">
+                                    <p class="text-sm text-white">The meal plan looks great, thank you! I just wanted to confirm if olive oil is okay for cooking?</p>
+                                    <span class="text-xs text-red-200 block mt-1 text-right">10:15 AM</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chat Input -->
+                        <div class="p-4 border-t border-gray-700 bg-gray-800/50">
+                            <form class="flex space-x-3">
+                                <input type="text" placeholder="Type your secure message..." required
+                                    class="flex-grow p-3 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:ring-red-500 focus:border-red-500">
+                                <button type="button" class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 transition duration-200 text-white font-semibold">
+                                    Send
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Scheduling & Info -->
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="p-6 bg-hm-card/50 rounded-xl shadow-xl border-2 border-gray-700 backdrop-blur-lg">
+                        <h2 class="text-xl font-semibold mb-4 text-red-400 flex items-center space-x-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-10 4h12M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <span>Request Appointment</span>
+                        </h2>
+                        <form class="space-y-3">
+                            <select class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white">
+                                <option>Video Call</option>
+                                <option>In-Person</option>
+                            </select>
+                            <input type="date" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white">
+                            <textarea placeholder="Reason..." rows="3" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white"></textarea>
+                            <button type="button" class="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-700 transition duration-200 text-white font-bold">
+                                Send Request
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="p-6 bg-hm-card/50 rounded-xl shadow-xl border-2 border-gray-700 backdrop-blur-lg">
+                        <h2 class="text-xl font-semibold mb-4 text-white">Current Provider</h2>
+                        <div class="space-y-2 text-sm text-gray-300">
+                            <p><strong>Name:</strong> Dr. Sarah Johnson, MD</p>
+                            <p><strong>Specialty:</strong> Primary Care</p>
+                            <p><strong>Office:</strong> (555) 123-4567</p>
+                            <p><strong>Location:</strong> HealthMate Clinic, Suite 101</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
